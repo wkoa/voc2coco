@@ -63,7 +63,7 @@ class voc2coco:
                 width = im.shape[1]
                 height = im.shape[0]
                 seg_data = json.load(open(json_file,'r'))
-                assert type(seg_data)==dict, 'annotation file format {} not supported'.format(type(dataset))
+                assert type(seg_data)==type(dict()), 'annotation file format {} not supported'.format(type(seg_data))
                 for shape in seg_data['shapes']:
                     seg_msg = []
                     for point in shape['points']:
