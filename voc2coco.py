@@ -4,7 +4,7 @@ Created on Thu Mar 08 16:01:57 2018
 
 Convert VOC dataset into COCO dataset
 
-@author: wjh
+@author: wkoa
 """
 import os
 import sys
