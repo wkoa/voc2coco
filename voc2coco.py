@@ -34,11 +34,11 @@ class voc2coco:
         self.annotaions_path = os.path.join(self.data_path,'Annotations')
         self.image_set_path = os.path.join(self.data_path,'ImageSets')
         self.info_msg =  {"date_created" : "2018-3",
-                          "contributor" : "Mech-Mind",
+                          "contributor" : None,
                           "year" : 2018,
                           "version" : 1.0,
                           "url" : "http://www.mech-mind.net/",
-                          "description" : "This is 1.0 version of the 2017 MS COCO dataset."
+                          "description" : None
                         }
         self.year = year
         self.categories_to_ids_map = self._get_categories_to_ids_map()
@@ -89,7 +89,7 @@ class voc2coco:
                 for obj in objs:
                     bndbox = obj.find('bndbox')
                     bbox = [xmin,xmax,ymin,ymax] \
-                    = [int(bndbox.find('xmin').text),int(bndbox.find('xmax').text),int(bndbox.find('ymin').text),int(bndbox.find('ymax').text)]
+                    = [int(bndbox.find('xmin').text)-1,int(bndbox.find('xmax').text),int(bndbox.find('ymin').text)-1,int(bndbox.find('ymax').text)]
                     one_ann_msg = { "segmentation":self._bbox_to_mask(bbox),
                                     "area":self._bbox_area_computer(bbox),
                                     "iscrowd":0,
@@ -101,7 +101,7 @@ class voc2coco:
                                     }
                     annotation_msg.append(one_ann_msg)    
                     annotation_id += 1
-            one_image_msg = { "file_name" :filename+".jpg",
+            one_image_msg = { "file_name":filename+".jpg",
                               "height":int(height),
                               "width":int(width),
                               "id":int(index)
@@ -115,7 +115,7 @@ class voc2coco:
         :return mask [points]
         """
         assert len(bbox) == 4, 'Wrong bndbox!'
-        mask = [bbox[0],bbox[2],bbox[1],bbox[2],bbox[1],bbox[3],bbox[0],bbox[3]]
+        mask = [bbox[0],bbox[2],bbox[0],bbox[3],bbox[1],bbox[3],bbox[1],bbox[2]]
         return [mask]
     def _bbox_area_computer(self,bbox):
         """
@@ -175,7 +175,7 @@ class voc2coco:
     def _points_to_mbr(self,points):
         """
         Transfer points to min bounding rectangle
-        :param: points
+        :param: points (a list of lists)
         :return: [x,y,width,height]
         """
         assert _isArrayLike(points), 'Points should be array like!'
@@ -189,6 +189,8 @@ class voc2coco:
     def _categories_msg_generator(self):
         categories_msg = []
         for category in self.classes:
+            if category == '__background__':
+                continue
             one_categories_msg = { "supercategory":"none",
                                    "id":self.categories_to_ids_map[category],
                                    "name":category
