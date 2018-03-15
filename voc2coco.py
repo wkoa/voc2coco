@@ -57,6 +57,7 @@ class voc2coco:
         for index in ids:
             filename = '{:0>6}'.format(index)
             json_file = os.path.join(self.data_path,'Segmentation_json',filename+'.json')
+            #Labelme label file .json
             if os.path.exists(json_file):
                 img_file = os.path.join(self.data_path,'JPEGImages',filename+'.jpg')
                 im = cv2.imread(img_file)
@@ -79,6 +80,7 @@ class voc2coco:
                                     }
                     annotation_msg.append(one_ann_msg)
                     annotation_id += 1
+            #LabelImg label file .xml
             else:
                 xml_file = os.path.join(self.annotaions_path,filename+'.xml')
                 tree = ET.parse(xml_file)
@@ -224,9 +226,9 @@ class voc2coco:
                             "categories":self.categories_msg}
             self._save_json_file('voc_'+self.year+'_'+img_set,result_json)
 
-def main():
+def demo():
     converter = voc2coco('D:\\MyCAS\\VOC2007\\VOCdevkit','2007') 
     converter.voc_to_coco_converter()            
 if __name__ == "__main__":
-    main()
+    demo()
     
