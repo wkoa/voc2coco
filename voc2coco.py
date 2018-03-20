@@ -33,13 +33,6 @@ class voc2coco:
         self.data_path = os.path.join(devkit_path,'VOC'+ year)
         self.annotaions_path = os.path.join(self.data_path,'Annotations')
         self.image_set_path = os.path.join(self.data_path,'ImageSets')
-        self.info_msg =  {"date_created" : "2018-3",
-                          "contributor" : None,
-                          "year" : 2018,
-                          "version" : 1.0,
-                          "url" : "http://www.mech-mind.net/",
-                          "description" : None
-                        }
         self.year = year
         self.categories_to_ids_map = self._get_categories_to_ids_map()
         self.categories_msg = self._categories_msg_generator()
@@ -90,8 +83,13 @@ class voc2coco:
                 height = size.find('height').text
                 for obj in objs:
                     bndbox = obj.find('bndbox')
-                    bbox = [xmin,xmax,ymin,ymax] \
+                    [xmin,xmax,ymin,ymax] \
                     = [int(bndbox.find('xmin').text)-1,int(bndbox.find('xmax').text),int(bndbox.find('ymin').text)-1,int(bndbox.find('ymax').text)]
+                    if xmin < 0:
+                        xmin = 0
+                    if ymin < 0:
+                        ymin = 0
+                    bbox = [xmin,xmax,ymin,ymax]
                     one_ann_msg = { "segmentation":self._bbox_to_mask(bbox),
                                     "area":self._bbox_area_computer(bbox),
                                     "iscrowd":0,
